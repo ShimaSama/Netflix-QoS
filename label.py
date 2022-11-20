@@ -1,13 +1,6 @@
 
 #!/usr/bin/env python
 
-"""
-example :
-    python 3_add_label.py twitter update_twitter-sg_20180310_135947.csv
-
-@author: liutao
-"""
-
 import sys
 import csv
 

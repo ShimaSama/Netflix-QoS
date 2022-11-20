@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+@author: liutao
+"""
 
+# Load libraries
 import pandas
 from pandas.plotting import scatter_matrix
 import matplotlib.pyplot as plt
@@ -20,14 +24,19 @@ from six import StringIO
 from IPython.display import Image  
 from sklearn.tree import export_graphviz
 import pydotplus
-import os     
+import os  
+import sys   
 
 def from_string(s):
   "Convert dotted IPv4 address to integer."
   return functools.reduce(lambda a,b: a<<8 | b, map(int, s.split(".")))
 
 # load dataset
-dataset = pandas.read_csv("junto.csv")
+file = sys.argv[1]
+#file2 = sys.argv[2]
+dataset = pandas.read_csv(file)
+#dataset2 = pandas.read_csv(file2)
+#dataset = dataset + dataset2
 print (dataset.shape)
 
 # head
@@ -53,8 +62,9 @@ for elem in X:
         for elem2 in elem:
                 
                 if type(elem2)==str and elem2.startswith('0x'):
-
+                     
                         elem[count]=int(elem2, 16)
+                        
                 
                 count += 1
                 
