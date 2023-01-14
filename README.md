@@ -65,3 +65,16 @@ We have collected the data from the network and parsed it to csv file. Now it is
 python2 classify.py traffic.csv
 ```
 
+### Traffic classifying
+
+Model is trained, so it is time to classify existing traffic. To do this, we need to execute the following command, specifying the file to classify:
+```
+python2 test.py <dataset>.csv
+```
+
+### Live traffic classifying
+
+Previous solution is used to classify traffic with an already collected data, but we can also classify network traffic with live data, taking profit of mitmweb and loading the model on it with the command:
+```
+mitmweb -s mitmpcap_ml.py
+```
