@@ -57,5 +57,11 @@ tshark -r othersmobil.pcap -T fields -E header=y -E separator=, -E quote=d -E oc
 
 ### Model training
 
-
+We have collected the data from the network and parsed it to csv file. Now it is time to create the model using the data generated with different algorithms. Following command generate three outputs:
+- Most influence features plot
+- Better algorithms plot
+- Generated model with Random Forest Classifier algorithm, which has better performance (finalized_RFC_model.sav)
+```
+python2 classify.py traffic.csv
+```
 
