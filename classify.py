@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@author: liutao
-"""
 
 # Load libraries
 import pandas
