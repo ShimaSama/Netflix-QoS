@@ -42,7 +42,7 @@ After it, get into `Netflix-QoS` directory and install project dependencies:
 pip install -r requirements.txt
 ```
 
-### Traffic collection
+### Computer traffic collection
 
 Once all software is installed, it is time to collect decrypted traffic using *mitmweb* that will be used to classify encrypted traffic to, afterwards, train the model.
 This script can be adapted to different services by changing the keywords of desired traffic. By default, application classifies between Netflix service and others, therefore, Netflix keywords are used.
@@ -54,6 +54,32 @@ When the data is collected and exported to `.pcap` files, we need to parse it to
 ```
 tshark -r othersmobil.pcap -T fields -E header=y -E separator=, -E quote=d -E occurrence=f -e ip.version -e ip.hdr_len  -e ip.id -e ip.flags -e ip.flags.rb -e ip.flags.df -e ip.flags.mf -e ip.frag_offset -e ip.ttl -e ip.proto -e ip.checksum -e ip.len -e ip.dsfield -e tcp.srcport -e tcp.dstport -e tcp.seq -e tcp.ack -e tcp.len -e tcp.hdr_len -e tcp.flags -e tcp.flags.fin -e tcp.flags.syn -e tcp.flags.reset -e tcp.flags.push -e tcp.flags.ack -e tcp.flags.urg -e tcp.flags.cwr -e tcp.window_size -e tcp.checksum -e tcp.urgent_pointer > traffic.csv"
 ```
+
+### Mobile traffic collection
+
+To capture traffic from an Adnroid device we need to perform some specific steps. Android devices with a version higher or equal than 7 do not trust users certificates, so to simplify the process we need to install it as a system certificate to be able to capture https traffic from any application. This requires root access.
+```
+# Rename the certificate for the phone to accept it
+hashed_name=`openssl x509 -inform PEM -subject_hash_old -in mitmproxy-ca-cert.cer | head -1`
+cp mitmproxy-ca-cert.cer $hashed_name.0
+
+# Push certificate to the phone
+adb push $hashed_name.0 /sdcard
+adb shell
+  scorpio:/ $ su
+  scorpio:/ # mount -o rw,remount /system /system
+  scorpio:/ # cp /sdcard/<old_hash>.0 /system/etc/security/cacerts/<old_hash>.0
+  scorpio:/ # chmod 644 /system/etc/security/cacerts/<old_hash>.0
+  scorpio:/ # chown root:root /system/etc/security/cacerts/<old_hash>.0
+  scorpio:/ # reboot
+
+# Configure IP tables and run MITM proxy
+sudo iptables -t nat -A POSTROUTING -s 10.10.10.0/24 -o wlan0 -j MASQUERADE
+sudo iptables -t nat -A PREROUTING -i wlan0 -s 10.10.10.1/24 -p tcp --dport 80 -j REDIRECT --to-port 8080
+sudo iptables -t nat -A PREROUTING -i wlan0 -s 10.10.10.1/24 -p tcp --dport 443 -j REDIRECT --to-port 8080
+mitmproxy --mode transparent -s mitmpcap.py
+```
+Change Android proxy settings to redirect to this device at port 8080.
 
 ### Model training
 
