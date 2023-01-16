@@ -24,6 +24,8 @@
 
 ## User Guide
 
+We recomend use the google colab as there is no need to install anything and it's faster because it uses cpu and gpu from google cloud. [Here are the google colab notes](google_colab). You can make a manual set up below.
+
 ### Setup
 
 For the complete execution of the NetClass application, the following software is needed:
